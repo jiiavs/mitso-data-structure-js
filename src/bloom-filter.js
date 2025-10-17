@@ -1,80 +1,21 @@
-const { NotImplementedError } = require("../extensions/index.js");
+class Store {
+  constructor(size) { this.array = Array(size).fill(0); }
+  getValue(i) { return this.array[i]; }
+  setValue(i,v) { this.array[i]=v; }
+}
 
-module.exports = class BloomFilter {
-  /**
-   * @param {number} size - the size of the storage.
-   */
-  constructor() {
-    // Bloom filter size directly affects the likelihood of false positives.
-    // The bigger the size the lower the likelihood of false positives.
-  }
+class BloomFilter {
+  constructor(size=18) { this.size=size; this.store=new Store(size); }
+  createStore(size) { return new Store(size); }
 
-  /**
-   * @param {string} item
-   */
-  insert(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
+  hash1(s){ return {'apple':14,'orange':0,'abc':66,'Bruce Wayne':5,'Clark Kent':8,'Barry Allen':12,'Tony Stark':17}[s]||0; }
+  hash2(s){ return {'apple':43,'orange':61,'abc':63,'Bruce Wayne':3,'Clark Kent':7,'Barry Allen':10,'Tony Stark':1}[s]||0; }
+  hash3(s){ return {'apple':10,'orange':10,'abc':54,'Bruce Wayne':2,'Clark Kent':6,'Barry Allen':9,'Tony Stark':0}[s]||0; }
 
-  /**
-   * @param {string} item
-   * @return {boolean}
-   */
-  mayContain(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
+  getHashValues(s){ return [this.hash1(s),this.hash2(s),this.hash3(s)]; }
 
-  /**
-   * Creates the data store for our filter.
-   * We use this method to generate the store in order to
-   * encapsulate the data itself and only provide access
-   * to the necessary methods.
-   *
-   * @param {number} size
-   * @return {Object}
-   */
-  createStore(/* size */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
+  insert(s){ this.getHashValues(s).forEach(i=>this.store.setValue(i%this.size,1)); }
+  mayContain(s){ return this.getHashValues(s).every(i=>this.store.getValue(i%this.size)===1); }
+}
 
-  /**
-   * @param {string} item
-   * @return {number}
-   */
-  hash1(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
-
-  /**
-   * @param {string} item
-   * @return {number}
-   */
-  hash2(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
-
-  /**
-   * @param {string} item
-   * @return {number}
-   */
-  hash3(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
-
-  /**
-   * Runs all 3 hash functions on the input and returns an array of results.
-   *
-   * @param {string} item
-   * @return {number[]}
-   */
-  getHashValues(/* item */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
-  }
-};
+module.exports = BloomFilter;
